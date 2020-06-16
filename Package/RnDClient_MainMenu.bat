@@ -1,0 +1,1 @@
+start .\WindowsNoEditor\RnD.exe MainMenuMap -game -fullcrashdumpalways -noailogging -NOVERIFYGC

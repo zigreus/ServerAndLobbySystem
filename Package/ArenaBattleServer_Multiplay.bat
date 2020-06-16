@@ -1,1 +1,0 @@
-start .\WindowsServer\ArenaBattleServer.exe Multiplay -server -game -log -fullcrashdumpalways -noailogging -NOVERIFYGC

@@ -1,0 +1,1 @@
+start .\WindowsServer\RnDServer.exe ThirdPersonExampleMap -server -game -log -fullcrashdumpalways -noailogging -NOVERIFYGC

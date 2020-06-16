@@ -1,1 +1,0 @@
-start .\WindowsNoEditor\ArenaBattle.exe Title -game -fullcrashdumpalways -noailogging -NOVERIFYGC
