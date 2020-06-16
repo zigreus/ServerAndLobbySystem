@@ -2,7 +2,9 @@
 
 #pragma once
 
+#include "RnD.h"
 #include "GameFramework/PlayerController.h"
+#include "LobbyGameMode.h"
 #include "LobbyPlayerController.generated.h"
 
 /**
@@ -84,7 +86,7 @@ public:
 		*	@Param	PlayerInfoArray		the player info array passed in from the server
 		*/
 		UFUNCTION(BlueprintImplementableEvent, Category = "Network|PlayerList")
-		void UpdateUMGPlayerList(const TArray<struct FLobbyPlayerInfo>& PlayerInfoArray);
+		void UpdateUMGPlayerList(const TArray<FLobbyPlayerInfo>& PlayerInfoArray);
 
 
 		/**

@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "RnD.h"
 #include "GameFramework/GameState.h"
 #include "LobbyGameState.generated.h"
 

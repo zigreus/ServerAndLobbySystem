@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "RnD.h"
 #include "LobbyPlayerController.h"
-#include "LobbyGameMode.h"
+
 #include "NWGameInstance.h"
 #include "NetworkPlayerState.h"
 #include "LobbyGameState.h"
@@ -29,13 +28,14 @@ void ALobbyPlayerController::BeginPlay()
 void ALobbyPlayerController::SendChatMessage(const FText & ChatMessage)
 {
 	// if this is the server call the game mode to prodcast the Chat Message
-	if (Role == ROLE_Authority)
+
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		ALobbyGameMode* GM = Cast<ALobbyGameMode>(GetWorld()->GetAuthGameMode());
 		if (GM)
 		{
 			//Add the player's name to the Chat Message then send it to the server
-			const FText OutChatMessage = FText::FromString(PlayerState->PlayerName + ": " + ChatMessage.ToString());
+			const FText OutChatMessage = FText::FromString(PlayerState->GetPlayerName() + ": " + ChatMessage.ToString());
 			GM->ProdcastChatMessage(OutChatMessage);
 		}
 	}
@@ -60,7 +60,7 @@ void ALobbyPlayerController::Client_ReceiveChatMessage_Implementation(const FTex
 void ALobbyPlayerController::KickPlayer(int32 PlayerIndex)
 {
 	//if the player is the host, get the game mode and send it to kick the player from the game
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		ALobbyGameMode* GM = Cast<ALobbyGameMode>(GetWorld()->GetAuthGameMode());
 		if (GM)
@@ -92,7 +92,7 @@ void ALobbyPlayerController::Client_UpdatePlayerList_Implementation(const TArray
 void ALobbyPlayerController::RequestServerPlayerListUpdate()
 {
 	// if this is the server call the game mode to request info
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		ALobbyGameMode* GM = Cast<ALobbyGameMode>(GetWorld()->GetAuthGameMode());
 
@@ -112,7 +112,7 @@ void ALobbyPlayerController::Server_RequestServerPlayerListUpdate_Implementation
 
 void ALobbyPlayerController::SetIsReadyState(bool NewReadyState)
 {
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Blue, TEXT("RoleAuthority/ server called"));
 		ANetworkPlayerState* NetworkedPlayerState = Cast<ANetworkPlayerState>(PlayerState);
@@ -134,7 +134,7 @@ void ALobbyPlayerController::Server_SetIsReadyState_Implementation(bool NewReady
 
 bool ALobbyPlayerController::CanGameStart() const
 {
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		ALobbyGameMode* GM = Cast<ALobbyGameMode>(GetWorld()->GetAuthGameMode());
 		if (GM)
@@ -146,7 +146,7 @@ bool ALobbyPlayerController::CanGameStart() const
 void ALobbyPlayerController::StartGame()
 {
 	//if the player is the host, get the game mode and send it to start the game
-	if (Role == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		ALobbyGameMode* GM = Cast<ALobbyGameMode>(GetWorld()->GetAuthGameMode());
 		if (GM)

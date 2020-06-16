@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "RnD.h"
 #include "LobbyGameMode.h"
 #include "LobbyPlayerController.h"
 #include "NetworkPlayerState.h"
@@ -63,7 +62,7 @@ void ALobbyGameMode::UpdatePlayerList()
 		else
 			TempLobbyPlayerInfo.bPlayerReadyState = false;
 
-		TempLobbyPlayerInfo.PlayerName = Player->PlayerState->PlayerName;
+		TempLobbyPlayerInfo.PlayerName = Player->PlayerState->GetPlayerName();
 		PlayerInfoArray.Add(TempLobbyPlayerInfo);
 	}
 

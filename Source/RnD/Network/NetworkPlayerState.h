@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "RnD.h"
 #include "GameFramework/PlayerState.h"
 #include "NetworkPlayerState.generated.h"
 

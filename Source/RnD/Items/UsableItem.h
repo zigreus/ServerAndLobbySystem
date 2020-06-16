@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "RnD.h"
 #include "GameFramework/Actor.h"
 #include "UsableItem.generated.h"
 

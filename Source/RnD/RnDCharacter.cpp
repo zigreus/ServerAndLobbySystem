@@ -1,8 +1,7 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 
-#include "RnD.h"
-#include "Kismet/HeadMountedDisplayFunctionLibrary.h"
 #include "RnDCharacter.h"
+#include "Kismet/HeadMountedDisplayFunctionLibrary.h"
 #include "Items/UsableItem.h"
 
 //////////////////////////////////////////////////////////////////////////

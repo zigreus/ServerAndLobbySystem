@@ -5,24 +5,11 @@ using System.Collections.Generic;
 
 public class RnDTarget : TargetRules
 {
-	public RnDTarget(TargetInfo Target)
+	public RnDTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-        // Type = TargetType.Server;
-       // UEBuildConfiguration.bCompileSteamOSS = true;
         bUsesSteam = true;
+
+		ExtraModuleNames.Add("RnD");
     }
-
-	//
-	// TargetRules interface.
-	//
-
-	public override void SetupBinaries(
-		TargetInfo Target,
-		ref List<UEBuildBinaryConfiguration> OutBuildBinaryConfigurations,
-		ref List<string> OutExtraModuleNames
-		)
-	{
-		OutExtraModuleNames.Add("RnD");
-	}
 }

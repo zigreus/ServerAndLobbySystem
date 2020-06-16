@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "RnD.h"
 #include "NWGameInstance.h"
 
 //we include the steam api here to be able to get the steam avatar
@@ -438,14 +437,16 @@ void UNWGameInstance::StartOnlineGame(FString ServerName, int32 MaxNumPlayers, b
 	ULocalPlayer* const Player = GetFirstGamePlayer();
 
 	// Call our custom HostSession function. GameSessionName is a GameInstance variable
-	HostSession(Player->GetPreferredUniqueNetId(), GameSessionName, ServerName, bIsLAN, bIsPresence, MaxNumPlayers, bIsPasswordProtected, SessionPassword);
+	TSharedPtr<const FUniqueNetId> UserId = Player->GetPreferredUniqueNetId().GetUniqueNetId();
+	HostSession(UserId, GameSessionName, ServerName, bIsLAN, bIsPresence, MaxNumPlayers, bIsPasswordProtected, SessionPassword);
 }
 
 
 void UNWGameInstance::FindOnlineGames(bool bIsLAN, bool bIsPresence)
 {
 	ULocalPlayer* const Player = GetFirstGamePlayer();
-	FindSessions(Player->GetPreferredUniqueNetId(), GameSessionName, bIsLAN, bIsPresence);
+	TSharedPtr<const FUniqueNetId> UserId = Player->GetPreferredUniqueNetId().GetUniqueNetId();
+	FindSessions(UserId, GameSessionName, bIsLAN, bIsPresence);
 }
 
 
@@ -458,8 +459,8 @@ void UNWGameInstance::JoinOnlineGame(int32 SessionIndex)
 
 	MaxPlayersinSession = SearchResult.Session.SessionSettings.NumPublicConnections;
 
-	JoinASession(Player->GetPreferredUniqueNetId(), GameSessionName, SearchResult);
-
+	TSharedPtr<const FUniqueNetId> UserId = Player->GetPreferredUniqueNetId().GetUniqueNetId();
+	JoinASession(UserId, GameSessionName, SearchResult);
 }
 
 
@@ -561,7 +562,7 @@ UTexture2D* UNWGameInstance::GetSteamAvatar(const FBPUniqueNetId UniqueNetId)
 			delete[] oAvatarRGBA;
 
 			//Setting some Parameters for the Texture and finally returning it
-			Avatar->PlatformData->NumSlices = 1;
+			Avatar->PlatformData->SetNumSlices(1);
 			Avatar->NeverStream = true;
 			//Avatar->CompressionSettings = TC_EditorIcon;
 

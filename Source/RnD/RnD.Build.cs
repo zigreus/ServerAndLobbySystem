@@ -4,11 +4,24 @@ using UnrealBuildTool;
 
 public class RnD : ModuleRules
 {
-	public RnD(TargetInfo Target)
+	public RnD(ReadOnlyTargetRules Target) : base(Target)
 	{
+        PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         MinFilesUsingPrecompiledHeaderOverride = 1;
-        bFasterWithoutUnity = true;
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay" });
+
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore",
+            "UMG",
+            "AIModule",
+            "GameplayTasks", 
+            "HeadMountedDisplay",
+            "NavigationSystem",
+            "OnlineSubsystem", // steam
+            "OnlineSubsystemUtils", // steam
+            "Networking" // steam
+        });
+
+        DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
+
         // Uncomment if you are using Slate UI
         //PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 

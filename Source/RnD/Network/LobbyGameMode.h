@@ -2,12 +2,9 @@
 
 #pragma once
 
+#include "RnD.h"
 #include "GameFramework/GameMode.h"
 #include "LobbyGameMode.generated.h"
-
-/**
- * 
- */
 
 
 USTRUCT(BlueprintType)
@@ -15,11 +12,17 @@ struct FLobbyPlayerInfo
 {
 	GENERATED_USTRUCT_BODY()
 
+	FLobbyPlayerInfo() : bPlayerReadyState(false)
+	{
+		PlayerName = TEXT("");
+	}
+	~FLobbyPlayerInfo() {}
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lobby Player Info")
 	bool bPlayerReadyState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lobby Player Info")
-		FString PlayerName;
+	FString PlayerName;
 };
 
 UCLASS()
@@ -27,13 +30,11 @@ class RND_API ALobbyGameMode : public AGameMode
 {
 	GENERATED_BODY()
 
-
-	TArray<struct FLobbyPlayerInfo> PlayerInfoArray;
+public:
+	TArray<FLobbyPlayerInfo> PlayerInfoArray;
 
 	UPROPERTY(EditDefaultsOnly)
 	FString GameMapName;
-
-public:
 
 	TArray<class ALobbyPlayerController*> ConnectedPlayers;
 

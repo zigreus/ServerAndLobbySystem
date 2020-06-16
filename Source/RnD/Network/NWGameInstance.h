@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "RnD.h"
 #include "Engine/GameInstance.h"
 #include "NWGameInstance.generated.h"
 
@@ -21,26 +22,27 @@ struct FCustomBlueprintSessionResult
 {
 	GENERATED_USTRUCT_BODY()
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
-		FString SessionName;
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
+	FString SessionName;
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
-		bool bIsLan;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
+	bool bIsLan;
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
-		int32 CurrentNumberOfPlayers;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
+	int32 CurrentNumberOfPlayers;
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
-		int32 MaxNumberOfPlayers;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
+	int32 MaxNumberOfPlayers;
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
-		bool bIsPasswordProtected;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
+	bool bIsPasswordProtected;
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
-		FString SessionPassword;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
+	FString SessionPassword;
 
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
-		int32 Ping;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom Blueprint Session Result")
+	int32 Ping;
 };
 
 
