@@ -487,7 +487,7 @@ void UNWGameInstance::ShowErrorMessage(const FText & ErrorMessage)
 bool UNWGameInstance::IsOnlineSubsystemSteam() const
 {
 	//get the steam online subsystem
-	IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get(FName("Steam"));
+	IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get(STEAM_SUBSYSTEM);
 
 	if (OnlineSub)
 		return true;
@@ -585,7 +585,7 @@ void UNWGameInstance::GetSteamFriendsList(APlayerController *PlayerController)
 	{
 
 		//get the steam online subsystem
-		IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get(FName("Steam"));
+		IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get(STEAM_SUBSYSTEM);
 
 		//check if the online subsystem is valid
 		if (OnlineSub)
@@ -620,7 +620,7 @@ void UNWGameInstance::OnReadFriendsListCompleted(int32 LocalUserNum, bool bWasSu
 	if (bWasSuccessful)
 	{
 		//get the steam online subsystem
-		IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get(FName("Steam"));
+		IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get(STEAM_SUBSYSTEM);
 
 		//check if the online subsystem is valid
 		if (OnlineSub)
