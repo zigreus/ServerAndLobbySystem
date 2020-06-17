@@ -151,5 +151,10 @@ void ALobbyPlayerController::StartGame()
 		ALobbyGameMode* GM = Cast<ALobbyGameMode>(GetWorld()->GetAuthGameMode());
 		if (GM)
 			GM->StartGameFromLobby();
+
+		// 원래대로라면 Hosting 서버를 통해 dedicated server를 생성하고 해당 서버정보를 받아와서 접속을 시켜야하지만...
+		// 지금은 hosting해주는 녀석이 없기 때문에 미리 띄워둔 서버로 접속시켜주자.
+		//FString URL = TEXT("172.17.70.118");
+		//ClientTravel(URL, ETravelType::TRAVEL_Absolute);
 	}
 }
