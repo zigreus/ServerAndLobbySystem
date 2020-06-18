@@ -97,6 +97,14 @@
 		{
 			"Name": "GearVR",
 			"Enabled": false
+		},
+		{
+			"Name": "AdvancedSessions",
+			"Enabled": false
+		},
+		{
+			"Name": "AdvancedSteamSessions",
+			"Enabled": false
 		}
 	]
 }

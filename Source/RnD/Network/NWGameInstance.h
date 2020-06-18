@@ -198,6 +198,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Maps")
 	FName MainMenuMap;
 
+	FName WorldMapName;
+
 
 
 	/**
@@ -211,7 +213,7 @@ private:
 	*  @Param    MaxNumPlayers          Number of Maximum allowed players on this "Session" (Server)
 	*/
 	bool HostSession(TSharedPtr<const FUniqueNetId> UserId, FName SessionName, FString ServerName, bool bIsLAN, bool bIsPresence, int32 MaxNumPlayers, bool bIsPasswordProtected, FString SessionPassword);
-
+	bool HostSessionForDedicatedServer(FName SessionName, FString ServerName, int32 MaxNumPlayers);
 
 	/**
 	*  Function fired when a session create request has completed

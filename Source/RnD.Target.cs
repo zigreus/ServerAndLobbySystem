@@ -10,6 +10,6 @@ public class RnDTarget : TargetRules
 		Type = TargetType.Game;
         bUsesSteam = true;
 
-		ExtraModuleNames.Add("RnD");
+        ExtraModuleNames.Add("RnD");
     }
 }

@@ -10,6 +10,6 @@ public class RnDEditorTarget : TargetRules
 		Type = TargetType.Editor;
 		bUsesSteam = true;
 
-		ExtraModuleNames.Add("RnD");
+        ExtraModuleNames.Add("RnD");
 	}
 }

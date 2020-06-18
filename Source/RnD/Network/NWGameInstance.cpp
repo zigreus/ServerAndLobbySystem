@@ -42,6 +42,7 @@ UNWGameInstance::UNWGameInstance()
 	FriendListReadCompleteDelegate = FOnReadFriendsListComplete::CreateUObject(this, &UNWGameInstance::OnReadFriendsListCompleted);
 
 	LanPlayerName = "Player";
+	WorldMapName = TEXT("ThirdPersonExampleMap");
 }
 
 
@@ -59,6 +60,11 @@ void UNWGameInstance::Init()
 			//we bind the delagate for accepting an invite to the session interface so when you accept an invite, you can join the game.
 			OnSessionUserInviteAcceptedDelegateHandle = Sessions->AddOnSessionUserInviteAcceptedDelegate_Handle(OnSessionUserInviteAcceptedDelegate);
 		}
+	}
+
+	if (IsRunningDedicatedServer())
+	{
+		HostSessionForDedicatedServer(GameSessionName, TEXT("Steam dedicated server"), 200);
 	}
 }
 
@@ -131,8 +137,68 @@ bool UNWGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName S
 	return false;
 }
 
+bool UNWGameInstance::HostSessionForDedicatedServer(FName SessionName, FString ServerName, int32 MaxNumPlayers)
+{
+	RdLOG_S(Warning);
+
+	// Get the Online Subsystem to work with
+	IOnlineSubsystem* const OnlineSub = IOnlineSubsystem::Get();
+	if (OnlineSub)
+	{
+		// Get the Session Interface, so we can call the "CreateSession" function on it
+		IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
+		if (Sessions.IsValid())
+		{
+			/*
+			Fill in all the Session Settings that we want to use.
+
+			There are more with SessionSettings.Set(...);
+			For example the Map or the GameMode/Type.
+			*/
+			SessionSettings = MakeShareable(new FOnlineSessionSettings());
+			SessionSettings->bIsLANMatch = false; // online matching
+			SessionSettings->bUsesPresence = false; // not lobby
+			SessionSettings->bIsDedicated = true;
+			SessionSettings->NumPublicConnections = MaxNumPlayers;
+			MaxPlayersinSession = MaxNumPlayers;
+			SessionSettings->NumPrivateConnections = 0;
+			SessionSettings->bAllowInvites = true;
+			SessionSettings->bAllowJoinInProgress = true;
+			SessionSettings->bShouldAdvertise = true;
+			SessionSettings->bAllowJoinViaPresence = true;
+			SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
+			//setting a value in the FOnlineSessionSetting 's settings array
+			SessionSettings->Set(SETTING_MAPNAME, GetWorld()->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineService);
+
+			//Making a temporary FOnlineSessionSetting variable to hold the data we want to add to the FOnlineSessionSetting 's settings array
+			FOnlineSessionSetting ExtraSessionSetting;
+			ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineService;
+
+			//setting the temporary data to the ServerName we got from UMG
+			ExtraSessionSetting.Data = ServerName;
+
+			//adding the Server Name value in the FOnlineSessionSetting 's settings array using the key defined in header
+			//the key can be any FNAME but we define it to avoid mistakes
+			SessionSettings->Settings.Add(SETTING_SERVER_NAME, ExtraSessionSetting);
+
+
+			// Set the delegate to the Handle of the SessionInterface
+			OnCreateSessionCompleteDelegateHandle = Sessions->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
+			// Our delegate should get called when this is complete (doesn't need to be successful!)
+			return Sessions->CreateSession(0, SessionName, *SessionSettings);
+		}
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("No OnlineSubsytem found!"));
+	}
+	return false;
+}
+
 void UNWGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
+	RdLOG_S(Warning);
+
 	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("OnCreateSessionComplete %s, %d"), *SessionName.ToString(), bWasSuccessful));
 	// Get the OnlineSubsystem so we can get the Session Interface
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
@@ -158,6 +224,8 @@ void UNWGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucces
 
 void UNWGameInstance::OnStartOnlineGameComplete(FName SessionName, bool bWasSuccessful)
 {
+	RdLOG_S(Warning);
+
 	//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("OnStartSessionComplete %s, %d"), *SessionName.ToString(), bWasSuccessful));
 	// Get the Online Subsystem so we can get the Session Interface
 	IOnlineSubsystem* OnlineSub = IOnlineSubsystem::Get();
@@ -174,7 +242,14 @@ void UNWGameInstance::OnStartOnlineGameComplete(FName SessionName, bool bWasSucc
 	// If the start was successful, we can open a NewMap if we want. Make sure to use "listen" as a parameter!
 	if (bWasSuccessful)
 	{
-		UGameplayStatics::OpenLevel(GetWorld(), LobbyMapName, true, "listen");
+		if (false == IsRunningDedicatedServer())
+		{
+			UGameplayStatics::OpenLevel(GetWorld(), LobbyMapName, true, "listen");
+		}
+		else
+		{
+			UGameplayStatics::OpenLevel(GetWorld(), WorldMapName);
+		}
 	}
 }
 
@@ -200,8 +275,15 @@ void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FName 
 			// We only want to set this Query Setting if "bIsPresence" is true
 			if (bIsPresence)
 			{
+				// lobby인 방(=IsPresence)만 검색한다
 				SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, bIsPresence, EOnlineComparisonOp::Equals);
 			}
+			else
+			{
+				// dedicated server를 검색한다
+				SessionSearch->QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
+			}
+
 			TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SessionSearch.ToSharedRef();
 			// Set the Delegate to the Delegate Handle of the FindSession function
 			OnFindSessionsCompleteDelegateHandle = Sessions->AddOnFindSessionsCompleteDelegate_Handle(OnFindSessionsCompleteDelegate);
@@ -247,35 +329,32 @@ void UNWGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
 				// This can be customized later on with your own classes to add more information that can be set and displayed
 				for (int32 SearchIdx = 0; SearchIdx < SessionSearch->SearchResults.Num(); SearchIdx++)
 				{
+					//temporary Session result to hold our data for this loop
+					FCustomBlueprintSessionResult TempCustomSeesionResult;
 
-						//temporary Session result to hold our data for this loop
-						FCustomBlueprintSessionResult TempCustomSeesionResult;
+					//uncomment if you want the session name to always be the name of the owning player (Computer name on lan and Steam name online)
+					//TempCustomSeesionResult.SessionName = SessionSearch->SearchResults[SearchIdx].Session.OwningUserName;
+					TempCustomSeesionResult.bIsLan = SessionSearch->SearchResults[SearchIdx].Session.SessionSettings.bIsLANMatch;
+					TempCustomSeesionResult.CurrentNumberOfPlayers = SessionSearch->SearchResults[SearchIdx].Session.SessionSettings.NumPublicConnections - SessionSearch->SearchResults[SearchIdx].Session.NumOpenPublicConnections;
+					TempCustomSeesionResult.MaxNumberOfPlayers = SessionSearch->SearchResults[SearchIdx].Session.SessionSettings.NumPublicConnections;
+					TempCustomSeesionResult.Ping = SessionSearch->SearchResults[SearchIdx].PingInMs;
 
-						//uncomment if you want the session name to always be the name of the owning player (Computer name on lan and Steam name online)
-						//TempCustomSeesionResult.SessionName = SessionSearch->SearchResults[SearchIdx].Session.OwningUserName;
-						TempCustomSeesionResult.bIsLan = SessionSearch->SearchResults[SearchIdx].Session.SessionSettings.bIsLANMatch;
-						TempCustomSeesionResult.CurrentNumberOfPlayers = SessionSearch->SearchResults[SearchIdx].Session.SessionSettings.NumPublicConnections - SessionSearch->SearchResults[SearchIdx].Session.NumOpenPublicConnections;
-						TempCustomSeesionResult.MaxNumberOfPlayers = SessionSearch->SearchResults[SearchIdx].Session.SessionSettings.NumPublicConnections;
-						TempCustomSeesionResult.Ping = SessionSearch->SearchResults[SearchIdx].PingInMs;
-
-						// get the server name
-						SessionSearch->SearchResults[SearchIdx].Session.SessionSettings.Get(SETTING_SERVER_NAME, TempCustomSeesionResult.SessionName);
+					// get the server name
+					SessionSearch->SearchResults[SearchIdx].Session.SessionSettings.Get(SETTING_SERVER_NAME, TempCustomSeesionResult.SessionName);
 						
-
+					if (false == SessionSearch->SearchResults[SearchIdx].Session.SessionSettings.bIsDedicated)
+					{
 						// get if the server is password protected
 						SessionSearch->SearchResults[SearchIdx].Session.SessionSettings.Get(SETTING_SERVER_IS_PROTECTED, TempCustomSeesionResult.bIsPasswordProtected);
 
-
 						// get the Password if the session is Password Protected
-						if(TempCustomSeesionResult.bIsPasswordProtected)
+						if (TempCustomSeesionResult.bIsPasswordProtected)
 							SessionSearch->SearchResults[SearchIdx].Session.SessionSettings.Get(SETTING_SERVER_PROTECT_PASSWORD, TempCustomSeesionResult.SessionPassword);
 
 						//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *TempCustomSeesionResult.SessionPassword);
+					}
 
-
-
-						CustomSessionResults.Add(TempCustomSeesionResult);
-					
+					CustomSessionResults.Add(TempCustomSeesionResult);
 				}
 			}
 
