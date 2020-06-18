@@ -1,0 +1,1 @@
+start "" "%~dp0RnDServer.exe" -log -server -clipboard -multiwindow
