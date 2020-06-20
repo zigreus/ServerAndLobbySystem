@@ -1,1 +1,1 @@
-start .\WindowsServer\RnDServer.exe ThirdPersonExampleMap -server -game -log -fullcrashdumpalways -noailogging -NOVERIFYGC
+start .\WindowsServer\RnDServer.exe ThirdPersonExampleMap -server -game -log -fullcrashdumpalways -noailogging -NOVERIFYGC -SteamServerName="¤¡¤¡¤¡¤¡¤¡¤¡package zig server"

@@ -158,7 +158,7 @@ bool UNWGameInstance::HostSessionForDedicatedServer(FName SessionName, FString S
 			SessionSettings = MakeShareable(new FOnlineSessionSettings());
 			SessionSettings->bIsLANMatch = false; // online matching
 			SessionSettings->bUsesPresence = false; // not lobby
-			SessionSettings->bIsDedicated = true;
+			SessionSettings->bIsDedicated = true; // dedicated server !!
 			SessionSettings->NumPublicConnections = MaxNumPlayers;
 			MaxPlayersinSession = MaxNumPlayers;
 			SessionSettings->NumPrivateConnections = 0;
@@ -281,7 +281,9 @@ void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FName 
 			else
 			{
 				// dedicated server를 검색한다
+				// 아예 QuerySetting을 설정 안하면 어떻게 되는거지?
 				SessionSearch->QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
+				SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, false, EOnlineComparisonOp::Equals);
 			}
 
 			TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SessionSearch.ToSharedRef();
