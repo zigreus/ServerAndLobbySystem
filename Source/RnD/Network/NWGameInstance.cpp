@@ -97,11 +97,11 @@ bool UNWGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName S
 			SessionSettings->bAllowJoinViaPresence = true;
 			SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
 			//setting a value in the FOnlineSessionSetting 's settings array
-			SessionSettings->Set(SETTING_MAPNAME, LobbyMapName.ToString(), EOnlineDataAdvertisementType::ViaOnlineService);
+			SessionSettings->Set(SETTING_MAPNAME, LobbyMapName.ToString(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 			
 			//Making a temporary FOnlineSessionSetting variable to hold the data we want to add to the FOnlineSessionSetting 's settings array
 			FOnlineSessionSetting ExtraSessionSetting;
-			ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineService;
+			ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineServiceAndPing;
 
 			//setting the temporary data to the ServerName we got from UMG
 			ExtraSessionSetting.Data = ServerName;
@@ -168,11 +168,11 @@ bool UNWGameInstance::HostSessionForDedicatedServer(FName SessionName, FString S
 			SessionSettings->bAllowJoinViaPresence = true;
 			SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
 			//setting a value in the FOnlineSessionSetting 's settings array
-			SessionSettings->Set(SETTING_MAPNAME, GetWorld()->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineService);
+			SessionSettings->Set(SETTING_MAPNAME, GetWorld()->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 			//Making a temporary FOnlineSessionSetting variable to hold the data we want to add to the FOnlineSessionSetting 's settings array
 			FOnlineSessionSetting ExtraSessionSetting;
-			ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineService;
+			ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineServiceAndPing;
 
 			//setting the temporary data to the ServerName we got from UMG
 			ExtraSessionSetting.Data = ServerName;
