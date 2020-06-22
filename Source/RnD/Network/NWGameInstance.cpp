@@ -64,7 +64,7 @@ void UNWGameInstance::Init()
 
 	if (IsRunningDedicatedServer())
 	{
-		HostSessionForDedicatedServer(GameSessionName, TEXT("Steam dedicated server"), 200);
+		HostSessionForDedicatedServer(GameSessionName, TEXT("CowboyDediServer"), 200);
 	}
 }
 
@@ -285,6 +285,11 @@ void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FName 
 				//SessionSearch->QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
 				//SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, false, EOnlineComparisonOp::Equals);
 				SessionSearch->QuerySettings.Set(SETTING_MAPNAME, FString(TEXT("CowboyDediMap")), EOnlineComparisonOp::Equals);
+
+				FOnlineSessionSetting ExtraSessionSetting;
+				ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineService;
+				ExtraSessionSetting.Data = FName(TEXT("CowboyDediServer"));
+				SessionSettings->Settings.Add(SETTING_SERVER_NAME, ExtraSessionSetting);
 			}
 
 			TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SessionSearch.ToSharedRef();
