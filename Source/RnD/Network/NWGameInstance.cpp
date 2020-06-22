@@ -168,21 +168,12 @@ bool UNWGameInstance::HostSessionForDedicatedServer(FName SessionName, FString S
 			SessionSettings->bAllowJoinViaPresence = true;
 			SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
 			SessionSettings->bAntiCheatProtected = true;
+
 			//setting a value in the FOnlineSessionSetting 's settings array
 			SessionSettings->Set(SETTING_MAPNAME, FString(TEXT("CowboyDediMap")), EOnlineDataAdvertisementType::ViaOnlineService);
-			SessionSettings->Set(SETTING_CUSTOMSEARCHINT1, 987654321, EOnlineDataAdvertisementType::ViaOnlineService);
-
-			//Making a temporary FOnlineSessionSetting variable to hold the data we want to add to the FOnlineSessionSetting 's settings array
-			FOnlineSessionSetting ExtraSessionSetting;
-			ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineService;
-
-			//setting the temporary data to the ServerName we got from UMG
-			ExtraSessionSetting.Data = ServerName;
-
-			//adding the Server Name value in the FOnlineSessionSetting 's settings array using the key defined in header
-			//the key can be any FNAME but we define it to avoid mistakes
-			SessionSettings->Settings.Add(SETTING_SERVER_NAME, ExtraSessionSetting);
-
+			SessionSettings->Set(SETTING_SERVER_NAME, ServerName, EOnlineDataAdvertisementType::ViaOnlineService);
+			SessionSettings->Set(SETTING_SERVER_IS_PROTECTED, false, EOnlineDataAdvertisementType::ViaOnlineService);
+			SessionSettings->Set(SETTING_SERVER_PROTECT_PASSWORD, FString(""), EOnlineDataAdvertisementType::ViaOnlineService);
 
 			// Set the delegate to the Handle of the SessionInterface
 			OnCreateSessionCompleteDelegateHandle = Sessions->AddOnCreateSessionCompleteDelegate_Handle(OnCreateSessionCompleteDelegate);
@@ -284,12 +275,8 @@ void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FName 
 			{
 				//SessionSearch->QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
 				//SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, false, EOnlineComparisonOp::Equals);
-				SessionSearch->QuerySettings.Set(SETTING_MAPNAME, FString(TEXT("CowboyDediMap")), EOnlineComparisonOp::Equals);
-
-				FOnlineSessionSetting ExtraSessionSetting;
-				ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineService;
-				ExtraSessionSetting.Data = FName(TEXT("CowboyDediServer"));
-				SessionSettings->Settings.Add(SETTING_SERVER_NAME, ExtraSessionSetting);
+				SessionSearch->QuerySettings.Set(SETTING_MAPNAME, FString(TEXT("CowboyDediMap")), EOnlineComparisonOp::In);
+				//SessionSearch->QuerySettings.Set(SETTING_SERVER_NAME, FString(TEXT("CowboyDediServer")), EOnlineComparisonOp::In);
 			}
 
 			TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SessionSearch.ToSharedRef();
