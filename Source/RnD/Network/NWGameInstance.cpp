@@ -170,6 +170,7 @@ bool UNWGameInstance::HostSessionForDedicatedServer(FName SessionName, FString S
 			SessionSettings->bAntiCheatProtected = true;
 			//setting a value in the FOnlineSessionSetting 's settings array
 			SessionSettings->Set(SETTING_MAPNAME, GetWorld()->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+			SessionSettings->Set(SETTING_CUSTOMSEARCHINT1, 987654321, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
 			//Making a temporary FOnlineSessionSetting variable to hold the data we want to add to the FOnlineSessionSetting 's settings array
 			FOnlineSessionSetting ExtraSessionSetting;
@@ -281,10 +282,9 @@ void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FName 
 			}
 			else
 			{
-				// dedicated server를 검색한다
-				// 아예 QuerySetting을 설정 안하면 어떻게 되는거지?
-				SessionSearch->QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
-				SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, false, EOnlineComparisonOp::Equals);
+				//SessionSearch->QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
+				//SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, false, EOnlineComparisonOp::Equals);
+				SessionSearch->QuerySettings.Set(SETTING_CUSTOMSEARCHINT1, 987654321, EOnlineComparisonOp::Equals);
 			}
 
 			TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SessionSearch.ToSharedRef();
