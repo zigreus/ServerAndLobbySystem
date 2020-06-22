@@ -97,11 +97,11 @@ bool UNWGameInstance::HostSession(TSharedPtr<const FUniqueNetId> UserId, FName S
 			SessionSettings->bAllowJoinViaPresence = true;
 			SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
 			//setting a value in the FOnlineSessionSetting 's settings array
-			SessionSettings->Set(SETTING_MAPNAME, LobbyMapName.ToString(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+			SessionSettings->Set(SETTING_MAPNAME, LobbyMapName.ToString(), EOnlineDataAdvertisementType::ViaOnlineService);
 			
 			//Making a temporary FOnlineSessionSetting variable to hold the data we want to add to the FOnlineSessionSetting 's settings array
 			FOnlineSessionSetting ExtraSessionSetting;
-			ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineServiceAndPing;
+			ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineService;
 
 			//setting the temporary data to the ServerName we got from UMG
 			ExtraSessionSetting.Data = ServerName;
@@ -169,12 +169,12 @@ bool UNWGameInstance::HostSessionForDedicatedServer(FName SessionName, FString S
 			SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
 			SessionSettings->bAntiCheatProtected = true;
 			//setting a value in the FOnlineSessionSetting 's settings array
-			SessionSettings->Set(SETTING_MAPNAME, GetWorld()->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
-			SessionSettings->Set(SETTING_CUSTOMSEARCHINT1, 987654321, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+			SessionSettings->Set(SETTING_MAPNAME, FString(TEXT("CowboyDediMap")), EOnlineDataAdvertisementType::ViaOnlineService);
+			SessionSettings->Set(SETTING_CUSTOMSEARCHINT1, 987654321, EOnlineDataAdvertisementType::ViaOnlineService);
 
 			//Making a temporary FOnlineSessionSetting variable to hold the data we want to add to the FOnlineSessionSetting 's settings array
 			FOnlineSessionSetting ExtraSessionSetting;
-			ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineServiceAndPing;
+			ExtraSessionSetting.AdvertisementType = EOnlineDataAdvertisementType::ViaOnlineService;
 
 			//setting the temporary data to the ServerName we got from UMG
 			ExtraSessionSetting.Data = ServerName;
@@ -284,7 +284,7 @@ void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FName 
 			{
 				//SessionSearch->QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
 				//SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, false, EOnlineComparisonOp::Equals);
-				SessionSearch->QuerySettings.Set(SETTING_CUSTOMSEARCHINT1, 987654321, EOnlineComparisonOp::Equals);
+				SessionSearch->QuerySettings.Set(SETTING_MAPNAME, FString(TEXT("CowboyDediMap")), EOnlineComparisonOp::Equals);
 			}
 
 			TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SessionSearch.ToSharedRef();
