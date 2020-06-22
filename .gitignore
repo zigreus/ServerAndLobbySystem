@@ -85,5 +85,7 @@ Plugins/*
 # Starter Content
 Content/StarterContent/*
 
-# publish
+# Publish folders
 Publish/*
+!PublishCopy/*
+!PublishCopy/WindowsServer/RnD/Binaries/Win64/*.dll

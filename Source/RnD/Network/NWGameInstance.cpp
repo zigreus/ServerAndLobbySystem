@@ -167,6 +167,7 @@ bool UNWGameInstance::HostSessionForDedicatedServer(FName SessionName, FString S
 			SessionSettings->bShouldAdvertise = true;
 			SessionSettings->bAllowJoinViaPresence = true;
 			SessionSettings->bAllowJoinViaPresenceFriendsOnly = false;
+			SessionSettings->bAntiCheatProtected = true;
 			//setting a value in the FOnlineSessionSetting 's settings array
 			SessionSettings->Set(SETTING_MAPNAME, GetWorld()->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
