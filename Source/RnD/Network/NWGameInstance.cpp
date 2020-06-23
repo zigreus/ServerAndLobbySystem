@@ -64,7 +64,7 @@ void UNWGameInstance::Init()
 
 	if (IsRunningDedicatedServer())
 	{
-		HostSessionForDedicatedServer(GameSessionName, TEXT("CowboyDediServer"), 200);
+		HostSessionForDedicatedServer(NAME_GameSession, TEXT("CowboyDediServer"), 200);
 	}
 }
 
@@ -263,7 +263,7 @@ void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FName 
 			SessionSearch = MakeShareable(new FOnlineSessionSearch());
 			SessionSearch->bIsLanQuery = bIsLAN;
 			SessionSearch->MaxSearchResults = 20;
-			SessionSearch->PingBucketSize = 50;
+			//SessionSearch->PingBucketSize = 50;
 
 			// We only want to set this Query Setting if "bIsPresence" is true
 			if (bIsPresence)
@@ -274,9 +274,9 @@ void UNWGameInstance::FindSessions(TSharedPtr<const FUniqueNetId> UserId, FName 
 			else
 			{
 				//SessionSearch->QuerySettings.Set(SEARCH_DEDICATED_ONLY, true, EOnlineComparisonOp::Equals);
-				//SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, false, EOnlineComparisonOp::Equals);
-				SessionSearch->QuerySettings.Set(SETTING_MAPNAME, FString(TEXT("CowboyDediMap")), EOnlineComparisonOp::In);
-				//SessionSearch->QuerySettings.Set(SETTING_SERVER_NAME, FString(TEXT("CowboyDediServer")), EOnlineComparisonOp::In);
+				SessionSearch->QuerySettings.Set(SEARCH_EMPTY_SERVERS_ONLY, true, EOnlineComparisonOp::Equals);
+				//SessionSearch->QuerySettings.Set(SETTING_MAPNAME, FString(TEXT("CowboyDediMap")), EOnlineComparisonOp::In);
+				SessionSearch->QuerySettings.Set(SETTING_SERVER_NAME, FString(TEXT("CowboyDediServer")), EOnlineComparisonOp::In);
 			}
 
 			TSharedRef<FOnlineSessionSearch> SearchSettingsRef = SessionSearch.ToSharedRef();
@@ -481,7 +481,7 @@ void UNWGameInstance::OnSessionUserInviteAccepted(bool bWasSuccessful, int32 Loc
 	{
 		if (TheSessionInvitedTo.IsValid())
 		{
-			JoinASession(LocalUserNum, GameSessionName, TheSessionInvitedTo);
+			JoinASession(LocalUserNum, NAME_GameSession, TheSessionInvitedTo);
 		}
 	}
 }
@@ -498,7 +498,7 @@ void UNWGameInstance::SendSessionInviteToFriend(APlayerController* InvitingPlaye
 			IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 			if (Sessions.IsValid() && LocalPlayer->GetPreferredUniqueNetId().IsValid() && Friend.IsValid())
 			{
-				Sessions->SendSessionInviteToFriend(*LocalPlayer->GetPreferredUniqueNetId(), GameSessionName, *Friend.GetUniqueNetId());
+				Sessions->SendSessionInviteToFriend(*LocalPlayer->GetPreferredUniqueNetId(), NAME_GameSession, *Friend.GetUniqueNetId());
 			}
 		}
 	}
@@ -510,9 +510,9 @@ void UNWGameInstance::StartOnlineGame(FString ServerName, int32 MaxNumPlayers, b
 	// Creating a local player where we can get the UserID from
 	ULocalPlayer* const Player = GetFirstGamePlayer();
 
-	// Call our custom HostSession function. GameSessionName is a GameInstance variable
+	// Call our custom HostSession function. NAME_GameSession is a GameInstance variable
 	TSharedPtr<const FUniqueNetId> UserId = Player->GetPreferredUniqueNetId().GetUniqueNetId();
-	HostSession(UserId, GameSessionName, ServerName, bIsLAN, bIsPresence, MaxNumPlayers, bIsPasswordProtected, SessionPassword);
+	HostSession(UserId, NAME_GameSession, ServerName, bIsLAN, bIsPresence, MaxNumPlayers, bIsPasswordProtected, SessionPassword);
 }
 
 
@@ -520,7 +520,7 @@ void UNWGameInstance::FindOnlineGames(bool bIsLAN, bool bIsPresence)
 {
 	ULocalPlayer* const Player = GetFirstGamePlayer();
 	TSharedPtr<const FUniqueNetId> UserId = Player->GetPreferredUniqueNetId().GetUniqueNetId();
-	FindSessions(UserId, GameSessionName, bIsLAN, bIsPresence);
+	FindSessions(UserId, NAME_GameSession, bIsLAN, bIsPresence);
 }
 
 
@@ -534,7 +534,7 @@ void UNWGameInstance::JoinOnlineGame(int32 SessionIndex)
 	MaxPlayersinSession = SearchResult.Session.SessionSettings.NumPublicConnections;
 
 	TSharedPtr<const FUniqueNetId> UserId = Player->GetPreferredUniqueNetId().GetUniqueNetId();
-	JoinASession(UserId, GameSessionName, SearchResult);
+	JoinASession(UserId, NAME_GameSession, SearchResult);
 }
 
 
@@ -547,7 +547,7 @@ void UNWGameInstance::DestroySessionAndLeaveGame()
 		if (Sessions.IsValid())
 		{
 			Sessions->AddOnDestroySessionCompleteDelegate_Handle(OnDestroySessionCompleteDelegate);
-			Sessions->DestroySession(GameSessionName);
+			Sessions->DestroySession(NAME_GameSession);
 		}
 	}
 }
